@@ -1,0 +1,1 @@
+/* Create a card component to display event information (title, date, location, attendee count). Use shadcn Card component with badges for event categories and buttons for actions like "View Details" or "Join Event". */

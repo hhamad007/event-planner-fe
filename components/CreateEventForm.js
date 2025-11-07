@@ -1,0 +1,1 @@
+/* Create a form for users to create new events. Include fields for event title, description, date, time, location, and image upload. Use shadcn form components with proper validation. */

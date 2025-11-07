@@ -1,0 +1,1 @@
+/* Build a detailed view of a single event showing all information, attendee list, location map, and action buttons. Use shadcn Card and Badge components for clean layout. */

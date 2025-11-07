@@ -1,0 +1,1 @@
+/* Create a simple footer with app information, useful links (About, Contact, Privacy Policy), and social media links. Keep it clean and responsive. */

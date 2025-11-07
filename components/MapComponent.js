@@ -1,0 +1,1 @@
+/* Integrate a map (Google Maps or similar) to show event locations. Display event markers on the map and allow users to get directions to the venue. */

@@ -1,0 +1,1 @@
+/* Build a grid layout to display multiple EventCard components. Make it responsive so cards arrange nicely on different screen sizes. Handle loading states when fetching events. */

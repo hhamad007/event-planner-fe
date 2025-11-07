@@ -1,0 +1,1 @@
+/* Write functions to communicate with the backend API. Include functions for login, register, getting events, creating events, and joining events. Handle errors and authentication tokens properly. */

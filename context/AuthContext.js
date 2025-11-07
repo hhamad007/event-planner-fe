@@ -1,0 +1,1 @@
+/* Create a React context to manage user login/logout state across the entire app. Store user information, handle login/logout functions, and provide authentication status to all components. */

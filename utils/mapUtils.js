@@ -1,0 +1,1 @@
+/* Write helper functions for map functionality like converting addresses to coordinates, calculating distances, and formatting location data for the map component. */
