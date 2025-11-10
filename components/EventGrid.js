@@ -1,1 +1,15 @@
-/* Build a grid layout to display multiple EventCard components. Make it responsive so cards arrange nicely on different screen sizes. Handle loading states when fetching events. */
+'use client';
+
+import EventCard from './EventCard';
+
+export default function EventGrid({ events = [] }) {
+  return (
+    <section className="event-grid-container">
+      <div className="event-grid">
+        {events.map((event, index) => (
+          <EventCard key={index} event={event} />
+        ))}
+      </div>
+    </section>
+  );
+}
