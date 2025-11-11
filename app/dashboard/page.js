@@ -1,34 +1,102 @@
-/* 
-Goal: Create an engaging homepage that gives users quick access to all their event-related activities and easy navigation to create or manage events.
+"use client";
 
+import { useEffect, useState } from "react";
+import { getProfile, getAllEvents } from "@/utils/api";
+import EventGrid from "@/components/EventGrid";
 
-What to Build:
-Create the main user dashboard page that displays after login. This is the user's personal hub for managing their events and seeing their activity.
+export default function DashboardPage() {
+  const [user, setUser] = useState(null);
+  const [myEvents, setMyEvents] = useState([]);
+  const [joinedEvents, setJoinedEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-Key Features to Include:
-Welcome Section - Show logged-in user's name and profile info
-My Events Grid - Display events the user has created (use EventGrid + EventCard from Dev 2)
-Joined Events Section - Show events the user is attending
-Quick Stats Cards - Total events created, events joined, upcoming events
-Create New Event Button - Prominent button to start creating an event
-Recent Activity - Latest updates on user's events (new attendees, comments, etc.)
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      try {
+        const profileData = await getProfile();
+        setUser(profileData);
 
+        const allEvents = await getAllEvents();
+        if (profileData && allEvents) {
+          const created = allEvents.filter(
+            (event) => event.organizer?._id === profileData._id
+          );
+          const joined = allEvents.filter((event) =>
+            event.attendees?.some((a) => a._id === profileData._id)
+          );
 
+          setMyEvents(created);
+          setJoinedEvents(joined);
+        }
+      } catch (error) {
+        console.error("Error loading dashboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
+    loadData();
+  }, []);
 
-Technical Requirements:
-Use AuthContext to get current user data
-Use api.js to fetch user's events from backend
-Implement responsive design with Tailwind CSS
-Handle loading states while fetching data
-Show empty states if user has no events
-Integrate EventCard and EventGrid components from Developer 2
+  if (loading) return <p className="loading">Loading dashboard...</p>;
+  if (!user) return <p className="loading">Please log in to view dashboard.</p>;
 
+  return (
+    <div className="dashboard-container">
+      {/* --- Welcome Header --- */}
+      <div className="dashboard-header">
+        <h1>Welcome, {user.firstName || "User"} 👋</h1>
+        <p className="text-gray-500">Your personal event dashboard</p>
+        <button
+          className="create-btn"
+          onClick={() => (window.location.href = "/create-event")}
+        >
+          + Create New Event
+        </button>
+      </div>
 
+      {/* --- Quick Stats --- */}
+      <div className="stats-grid">
+        <div className="stat-card">
+          <h3>{myEvents.length}</h3>
+          <p>Events Created</p>
+        </div>
+        <div className="stat-card">
+          <h3>{joinedEvents.length}</h3>
+          <p>Events Joined</p>
+        </div>
+        <div className="stat-card">
+          <h3>
+            {
+              myEvents.filter(
+                (event) => new Date(event.date) > new Date()
+              ).length
+            }
+          </h3>
+          <p>Upcoming Events</p>
+        </div>
+      </div>
 
-Dependencies:
-Must complete AuthContext first
-Must complete api.js first
-Will integrate EventCard/EventGrid from Developer 2
-Should work with NavBar for navigation
-*/
+      {/* --- My Events --- */}
+      <section className="dashboard-section">
+        <h2>My Events</h2>
+        {myEvents.length > 0 ? (
+          <EventGrid events={myEvents} />
+        ) : (
+          <p className="no-events">You haven’t created any events yet.</p>
+        )}
+      </section>
+
+      {/* --- Joined Events --- */}
+      <section className="dashboard-section">
+        <h2>Joined Events</h2>
+        {joinedEvents.length > 0 ? (
+          <EventGrid events={joinedEvents} />
+        ) : (
+          <p className="no-events">You haven’t joined any events yet.</p>
+        )}
+      </section>
+    </div>
+  );
+}

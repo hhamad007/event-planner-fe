@@ -1,149 +1,89 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getEventById } from "@/utils/api"; // same API handler you’re using for Ticketmaster
-import { Calendar, MapPin, Clock, Users } from "lucide-react";
-import { motion } from "framer-motion";
-import Link from "next/link";
+import { Calendar, MapPin, Users } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-export default function EventDetails() {
+export default function EventDetailsPage() {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchEvent() {
       try {
-        const data = await getEventById(id);
+        const res = await fetch(`http://localhost:5001/api/events/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch event details");
+        const data = await res.json();
         setEvent(data);
       } catch (err) {
-        console.error("Error fetching event:", err);
+        console.error(err);
+        setError("Unable to load this event.");
       } finally {
         setLoading(false);
       }
     }
-    fetchEvent();
+
+    if (id) fetchEvent();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-[var(--color-accent)] font-medium">
-        Loading event details...
-      </div>
-    );
-  }
-
-  if (!event) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-[var(--color-error)] font-semibold">
-        Event not found.
-      </div>
-    );
-  }
+  if (loading) return <p className="text-center text-gray-500 mt-10">Loading...</p>;
+  if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] py-10 px-6">
-      <div className="max-w-5xl mx-auto bg-white shadow-md rounded-3xl overflow-hidden">
-        {/* Hero Image */}
-        <div className="relative">
-          <img
-            src={event.image || "https://dummyimage.com/900x400/edeaff/bfa2ff.png&text=Event+Image"}
-            alt={event.title}
-            className="w-full h-72 object-cover"
-          />
-          {event.category && (
-            <span className="absolute top-5 left-5 bg-[var(--color-primary-light)] text-[var(--color-accent)] text-xs font-medium px-3 py-1 rounded-md shadow">
-              {event.category}
-            </span>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="p-8 space-y-6">
-          {/* Title and Date */}
-          <div>
-            <h1 className="text-3xl font-bold text-[var(--color-accent)] mb-2">
-              {event.title}
-            </h1>
-            <div className="flex flex-wrap gap-4 text-gray-600 text-sm">
-              <div className="flex items-center">
-                <Calendar size={16} className="mr-2 text-[var(--color-accent)]" />
-                <span>{event.date}</span>
-              </div>
-              <div className="flex items-center">
-                <Clock size={16} className="mr-2 text-[var(--color-accent)]" />
-                <span>{event.time}</span>
-              </div>
-              <div className="flex items-center">
-                <MapPin size={16} className="mr-2 text-[var(--color-accent)]" />
-                <span>{event.location}</span>
-              </div>
-            </div>
+    <div className="min-h-screen bg-[#F8F6FF] py-10 px-6 flex justify-center">
+      <Card className="w-full max-w-2xl shadow-lg border border-gray-100 bg-white rounded-2xl">
+        {/* Header */}
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
+            {event.title}
+          </CardTitle>
+          <div className="flex items-center text-sm text-gray-500 gap-3">
+            <Calendar size={16} className="text-purple-500" />
+            <span>{new Date(event.date).toLocaleDateString("en-GB")}</span>
+            <MapPin size={16} className="text-purple-500" />
+            <span>{event.location}</span>
           </div>
+        </CardHeader>
 
-          {/* Description */}
-          <div>
-            <h2 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
-              About this Event
-            </h2>
-            <p className="text-gray-700 leading-relaxed">
-              {event.description || "No description provided."}
-            </p>
-          </div>
+        {/* Image */}
+        <img
+          src={
+            event.image ||
+            "https://dummyimage.com/600x400/edeaff/bfa2ff.png&text=Event+Image"
+          }
+          alt={event.title}
+          className="rounded-xl w-full h-64 object-cover mb-6"
+        />
+
+        {/* Description */}
+        <CardContent>
+          <p className="text-gray-700 leading-relaxed mb-6">
+            {event.description || "No description available."}
+          </p>
 
           {/* Attendees */}
-          <div>
-            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3">
-              Attendees
-            </h3>
-            <div className="flex items-center gap-2 flex-wrap">
-              {(event.attendees || []).slice(0, 5).map((att, i) => (
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Attendees
+          </h3>
+          <div className="flex items-center gap-1 flex-wrap">
+            {event.attendees?.length > 0 ? (
+              event.attendees.slice(0, 10).map((attendee, i) => (
                 <img
                   key={i}
-                  src={att.avatar || "https://i.pravatar.cc/40?img=" + i}
-                  alt={att.name}
-                  className="w-7 h-7 rounded-full border-2 border-white shadow"
-                  title={att.name}
+                  src={attendee.avatar || `https://i.pravatar.cc/25?img=${i + 1}`}
+                  alt={attendee.name || "User"}
+                  className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
                 />
-              ))}
-              {event.attendees?.length > 5 && (
-                <span className="text-xs text-gray-600 ml-2">
-                  +{event.attendees.length - 5} more
-                </span>
-              )}
-            </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No attendees yet.</p>
+            )}
           </div>
-
-          {/* Buttons */}
-          <div className="flex flex-wrap gap-3 mt-6">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className="bg-[var(--color-primary)] text-white px-5 py-2 rounded-xl font-medium hover:bg-[var(--color-accent)] transition"
-            >
-              Join Event
-            </motion.button>
-
-            <Link
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                event.location
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-[var(--color-primary-light)] text-[var(--color-accent)] px-5 py-2 rounded-xl font-medium hover:bg-[var(--color-primary)] hover:text-white transition"
-            >
-              View on Google Maps
-            </Link>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className="bg-gray-100 text-gray-700 px-5 py-2 rounded-xl font-medium hover:bg-gray-200 transition"
-            >
-              Share Event
-            </motion.button>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
