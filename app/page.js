@@ -1,42 +1,40 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getNearbyEvents } from '@/utils/api';
-import EventCard from '@/components/EventCard';
+import EventGrid from '@/components/EventGrid';
+import { getAllEvents } from '@/utils/api';
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch all events on load
   useEffect(() => {
     async function fetchEvents() {
-      try {
-        const data = await getNearbyEvents();
-        setEvents(data || []);
-      } catch (err) {
-        console.error('Failed to load events', err);
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      const res = await getAllEvents();
+      setEvents(res || []);
+      setLoading(false);
     }
     fetchEvents();
   }, []);
 
   return (
-    <div className="home-container">
-      {loading ? (
-        <p className="loading">Loading events...</p>
-      ) : events.length > 0 ? (
-        <div className="event-grid-container">
-          <div className="event-grid">
-            {events.map((event, index) => (
-              <EventCard key={index} event={event} />
-            ))}
+    <main className="home-container">
+      {/* ✅ Collaborator’s NavBar will automatically appear (from layout.js) */}
+      <section className="event-grid-section">
+        {loading ? (
+          <div className="text-center text-gray-500 mt-10">
+            Loading events...
           </div>
-        </div>
-      ) : (
-        <p className="no-events">No events found nearby.</p>
-      )}
-    </div>
+        ) : events.length > 0 ? (
+          <EventGrid events={events} />
+        ) : (
+          <div className="text-center text-gray-400 mt-10">
+            No events yet. Be the first to create one!
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
