@@ -1,10 +1,31 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/context/AuthContext";
+import { 
+  Eye, 
+  EyeOff, 
+  Mail, 
+  Lock, 
+  User, 
+  AlertCircle, 
+  CheckCircle, 
+  Loader2,
+  Calendar 
+} from "lucide-react";
+
 /* Create a popup modal with login and register forms. Use the shadcn Dialog component with input fields for email/password. Handle form submission and connect to the AuthContext for user authentication. */
 
-const AuthModal = ({ isOpen, onClose, mode = 'login', onSwitchMode }) => {
+const AuthModal = ({ isOpen, onClose, mode = 'login', onSwitchMode, onSuccess }) => {
   const { 
     login, 
     signup, 
-    isLoading, 
+    isLoading,
+    isAuthenticated, 
     error, 
     successMessage, 
     clearError, 
@@ -28,6 +49,21 @@ const AuthModal = ({ isOpen, onClose, mode = 'login', onSwitchMode }) => {
   useEffect(() => {
     setAuthMode(mode);
   }, [mode]);
+
+  // Close modal when user becomes authenticated
+  useEffect(() => {
+    if (isOpen && isAuthenticated && !isLoading && !error) {
+      // Small delay to allow user to see any success message
+      const timer = setTimeout(() => {
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          onClose();
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, isLoading, error, isOpen, onSuccess, onClose]);
 
   // Clear form and errors when modal opens/closes
   useEffect(() => {
@@ -139,7 +175,12 @@ const AuthModal = ({ isOpen, onClose, mode = 'login', onSwitchMode }) => {
           password: formData.password,
           rememberMe: formData.rememberMe
         });
-        onClose();
+        // Call success callback if provided, otherwise just close
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          onClose();
+        }
       } else {
         await signup({
           firstName: formData.firstName.trim(),
@@ -149,7 +190,12 @@ const AuthModal = ({ isOpen, onClose, mode = 'login', onSwitchMode }) => {
           confirmPassword: formData.confirmPassword,
           rememberMe: formData.rememberMe
         });
-        onClose();
+        // Call success callback if provided, otherwise just close
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          onClose();
+        }
       }
     } catch (err) {
       // Error is handled by AuthContext
@@ -450,9 +496,9 @@ const AuthModal = ({ isOpen, onClose, mode = 'login', onSwitchMode }) => {
         {!isLogin && (
           <div className="text-xs text-gray-500 text-center">
             By creating an account, you agree to our{' '}
-            <a href="/terms" className="text-blue-600 hover:underline">Terms of Service</a>
+            <span className="text-blue-600 cursor-pointer hover:underline">Terms of Service</span>
             {' '}and{' '}
-            <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>
+            <span className="text-blue-600 cursor-pointer hover:underline">Privacy Policy</span>
           </div>
         )}
       </DialogContent>
