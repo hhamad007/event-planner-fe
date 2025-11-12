@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import EventGrid from '@/components/EventGrid';
+import MapComponent from '@/components/MapComponent';
 import { getMyEvents, searchEvents } from '@/utils/api';
 
 export default function DashboardPage() {
@@ -11,7 +12,6 @@ export default function DashboardPage() {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
-  //  Fetch user’s created events on load
   useEffect(() => {
     async function fetchMyEvents() {
       setLoading(true);
@@ -22,7 +22,6 @@ export default function DashboardPage() {
     fetchMyEvents();
   }, []);
 
-  //  Handle event search
   async function handleSearch(e) {
     e.preventDefault();
     setLoading(true);
@@ -31,14 +30,13 @@ export default function DashboardPage() {
     setLoading(false);
   }
 
-  //  Handle create event redirect
   function handleCreateEvent() {
-    router.push('/create-event'); // Navigates to your CreateEvent page
+    router.push('/create-event');
   }
 
   return (
     <main className="dashboard-container">
-      {/* ======= Header Section ======= */}
+      {/* Header */}
       <section className="dashboard-header">
         <div>
           <h1 className="dashboard-title">My Dashboard</h1>
@@ -47,13 +45,12 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Create Event Button */}
         <button onClick={handleCreateEvent} className="create-event-btn">
           + Create Event
         </button>
       </section>
 
-      {/* ======= Search Bar ======= */}
+      {/* Search Bar */}
       <form className="search-bar" onSubmit={handleSearch}>
         <input
           type="text"
@@ -64,12 +61,20 @@ export default function DashboardPage() {
         <button type="submit">Search</button>
       </form>
 
-      {/* ======= Events Section ======= */}
+      {/* Events Section */}
       <section className="dashboard-events">
         {loading ? (
           <div className="loading-text">Loading events...</div>
         ) : events.length > 0 ? (
-          <EventGrid events={events} />
+          <>
+            <EventGrid events={events} />
+
+            {/* Add map showing all event markers */}
+            <h3 style={{ marginTop: '40px', textAlign: 'center' }}>
+              📍 Event Locations
+            </h3>
+            <MapComponent events={events} />
+          </>
         ) : (
           <div className="no-events-text">No events found.</div>
         )}

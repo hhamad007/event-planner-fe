@@ -1,90 +1,73 @@
 'use client';
+
 import { useState } from 'react';
 import { createEvent } from '@/utils/api';
+import LocationPicker from './LocationPicker';
 
 export default function CreateEventForm() {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     title: '',
     date: '',
-    location: '',
+    venue: '',
     description: '',
+    location: null,
   });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
 
-    const res = await createEvent(formData);
-
-    if (res && res.success !== false) {
-      setMessage(' Event created successfully!');
-      setFormData({ title: '', date: '', location: '', description: '' });
-    } else {
-      setMessage(' Failed to create event. Please log in again.');
+    try {
+      const res = await createEvent(form);
+      if (res) alert(' Event created successfully!');
+    } catch (err) {
+      alert(' Failed to create event.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-  };
+  }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-      }}
-    >
+    <form onSubmit={handleSubmit} className="create-event-form">
+      <h2>Create Event</h2>
+
       <input
-        name="title"
         type="text"
         placeholder="Event Title"
-        value={formData.title}
-        onChange={handleChange}
+        value={form.title}
+        onChange={(e) => setForm({ ...form, title: e.target.value })}
         required
-        className="border p-2 rounded"
       />
       <input
-        name="date"
-        type="date"
-        value={formData.date}
-        onChange={handleChange}
+        type="datetime-local"
+        value={form.date}
+        onChange={(e) => setForm({ ...form, date: e.target.value })}
         required
-        className="border p-2 rounded"
       />
       <input
-        name="location"
         type="text"
-        placeholder="Location"
-        value={formData.location}
-        onChange={handleChange}
-        required
-        className="border p-2 rounded"
+        placeholder="Venue / Address"
+        value={form.venue}
+        onChange={(e) => setForm({ ...form, venue: e.target.value })}
       />
       <textarea
-        name="description"
         placeholder="Description"
-        value={formData.description}
-        onChange={handleChange}
-        className="border p-2 rounded"
+        value={form.description}
+        onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-indigo-600 text-white px-4 py-2 rounded"
-      >
+      {/* 🌍 Location Picker */}
+      <label style={{ fontWeight: '600', marginTop: '10px' }}>Select Event Location:</label>
+      <LocationPicker
+        onLocationSelect={(coords) =>
+          setForm({ ...form, location: { lat: coords.lat, lng: coords.lng } })
+        }
+      />
+
+      <button type="submit" disabled={loading} className="submit-btn">
         {loading ? 'Creating...' : 'Create Event'}
       </button>
-
-      {message && <p style={{ color: '#444' }}>{message}</p>}
     </form>
   );
 }

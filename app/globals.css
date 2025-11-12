@@ -432,3 +432,24 @@ button:hover {
 .event-details-content .attendee-list {
   margin-top: 25px;
 }
+.view-map-btn {
+  background: #e3d7ff;
+  color: #5b21b6;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.view-map-btn:hover {
+  background: #c4b5fd;
+  transform: scale(1.05);
+}
+
+.event-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
