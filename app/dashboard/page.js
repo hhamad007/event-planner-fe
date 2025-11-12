@@ -11,46 +11,65 @@ export default function DashboardPage() {
   const [events, setEvents] = useState([]);
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
+  //  Fetch user’s created events
   useEffect(() => {
     async function fetchMyEvents() {
-      setLoading(true);
-      const res = await getMyEvents();
-      setEvents(res || []);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const res = await getMyEvents();
+        if (res && Array.isArray(res.data)) {
+          setEvents(res.data);
+        } else if (Array.isArray(res)) {
+          setEvents(res);
+        } else {
+          setEvents([]);
+        }
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchMyEvents();
   }, []);
 
+  //  Search events
   async function handleSearch(e) {
     e.preventDefault();
     setLoading(true);
     const res = await searchEvents({ q: query });
-    setEvents(res || []);
+    if (res && Array.isArray(res.data)) setEvents(res.data);
+    else if (Array.isArray(res)) setEvents(res);
+    else setEvents([]);
     setLoading(false);
   }
 
+  // Handle create event
   function handleCreateEvent() {
-    router.push('/create-event');
+    router.push('/create-event'); // Navigates to your Create Event page
   }
 
   return (
     <main className="dashboard-container">
-      {/* Header */}
+      {/* ===== Dashboard Header ===== */}
       <section className="dashboard-header">
         <div>
           <h1 className="dashboard-title">My Dashboard</h1>
           <p className="dashboard-subtitle">
-            Manage your events, create new ones, or explore existing.
+            Manage your events, create new ones, and view their locations.
           </p>
         </div>
 
+        {/* Create Event Button */}
         <button onClick={handleCreateEvent} className="create-event-btn">
           + Create Event
         </button>
       </section>
 
-      {/* Search Bar */}
+      {/* ===== Search Bar ===== */}
       <form className="search-bar" onSubmit={handleSearch}>
         <input
           type="text"
@@ -61,19 +80,25 @@ export default function DashboardPage() {
         <button type="submit">Search</button>
       </form>
 
-      {/* Events Section */}
+      {/* ===== Events Section ===== */}
       <section className="dashboard-events">
         {loading ? (
           <div className="loading-text">Loading events...</div>
         ) : events.length > 0 ? (
           <>
-            <EventGrid events={events} />
+            {/*  Event grid updated to handle card clicks */}
+            <EventGrid events={events} onSelect={setSelectedEvent} />
 
-            {/* Add map showing all event markers */}
-            <h3 style={{ marginTop: '40px', textAlign: 'center' }}>
-              📍 Event Locations
-            </h3>
-            <MapComponent events={events} />
+            {/*  If an event is clicked, show its map below */}
+            {selectedEvent && selectedEvent.latitude && selectedEvent.longitude && (
+              <div style={{ marginTop: '30px' }}>
+                <MapComponent
+                  latitude={selectedEvent.latitude}
+                  longitude={selectedEvent.longitude}
+                  eventTitle={selectedEvent.title}
+                />
+              </div>
+            )}
           </>
         ) : (
           <div className="no-events-text">No events found.</div>
