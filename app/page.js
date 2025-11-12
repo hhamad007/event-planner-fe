@@ -1,42 +1,30 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getNearbyEvents } from '@/utils/api';
+import { getAllEvents } from '@/utils/api';  
 import EventCard from '@/components/EventCard';
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchEvents() {
-      try {
-        const data = await getNearbyEvents();
-        setEvents(data || []);
-      } catch (err) {
-        console.error('Failed to load events', err);
-      } finally {
-        setLoading(false);
-      }
+    async function loadEvents() {
+      const data = await getAllEvents();
+      setEvents(data || []);
     }
-    fetchEvents();
+    loadEvents();
   }, []);
 
   return (
-    <div className="home-container">
-      {loading ? (
-        <p className="loading">Loading events...</p>
-      ) : events.length > 0 ? (
-        <div className="event-grid-container">
-          <div className="event-grid">
-            {events.map((event, index) => (
-              <EventCard key={index} event={event} />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <p className="no-events">No events found nearby.</p>
-      )}
-    </div>
+    <main className="home-container">
+      <h1 className="home-title">Discover Events</h1>
+      <section className="event-grid">
+        {events.length > 0 ? (
+          events.map((event, idx) => <EventCard key={idx} event={event} />)
+        ) : (
+          <p>No events found.</p>
+        )}
+      </section>
+    </main>
   );
 }

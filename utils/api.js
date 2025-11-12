@@ -1,4 +1,29 @@
 /* Write functions to communicate with the backend API. Include functions for login, register, getting events, creating events, and joining events. Handle errors and authentication tokens properly. */
+async function fetchAPI(endpoint, method = "GET", body = null, auth = false) {
+  const headers = { "Content-Type": "application/json" };
+  if (auth) {
+    const token = localStorage.getItem("token");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const options = {
+    method,
+    headers,
+    ...(body && { body: JSON.stringify(body) }),
+  };
+
+  try {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, options);
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`API Error ${res.status}: ${text}`);
+    }
+    return await res.json();
+  } catch (error) {
+    console.error("API Error:", error.message);
+    return null;
+  }
+}
 
 // API Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
