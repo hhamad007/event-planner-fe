@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getNearbyEvents } from '@/utils/api';
+import { eventsAPI } from '@/utils/api';
 import EventCard from '@/components/EventCard';
 
 export default function HomePage() {
@@ -11,7 +11,7 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const data = await getNearbyEvents();
+        const data = await eventsAPI.getEvents();
         setEvents(data || []);
       } catch (err) {
         console.error('Failed to load events', err);
