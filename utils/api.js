@@ -320,6 +320,19 @@ export const eventsAPI = {
     
     return await apiCall(endpoint);
   },
+
+  // Get nearby events based on location
+  getNearbyEvents: async (lat = 51.5072, lon = -0.1276, radius = 10) => {
+    const params = {
+      latitude: lat,
+      longitude: lon,
+      radius: radius,
+      limit: 20
+    };
+    
+    const queryParams = new URLSearchParams(params);
+    return await apiCall(`/events/nearby?${queryParams}`);
+  },
   
   // Get single event by ID
   getEvent: async (eventId) => {
@@ -488,5 +501,11 @@ const api = {
   utils: apiUtils
 };
 
+// Standalone exports for backward compatibility
+export const getNearbyEvents = eventsAPI.getNearbyEvents;
+
 export default api;
+
+
+
 
