@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import EventGrid from '@/components/EventGrid';
 import { getAllEvents } from '@/utils/api';
+import EventCard from '@/components/EventCard';
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Fetch all events on load
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function HomePage() {
       setEvents(res || []);
       setLoading(false);
     }
-    fetchEvents();
+    loadEvents();
   }, []);
 
   return (
