@@ -1,4 +1,4 @@
-﻿/* Build the main navigation bar that shows different content for logged-in vs logged-out users. Include app logo, navigation links, and login/logout buttons. Make it responsive for mobile and desktop. */
+/* Build the main navigation bar that shows different content for logged-in vs logged-out users. Include app logo, navigation links, and login/logout buttons. Make it responsive for mobile and desktop. */
 'use client';
 
 import React, { useState } from 'react';
@@ -48,7 +48,7 @@ const LogOutIcon = () => (
   </svg>
 );
 
-const Navbar = () => {
+const NavBar = () => {
   const { 
     user, 
     isAuthenticated, 
@@ -63,20 +63,159 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState('login');
+  const [authModalMode, setAuthModalMode] = useState('login'); // 'login' or 'signup'
+  const [authModalKey, setAuthModalKey] = useState(0); // Force re-render of modal
 
-  const handleLogout = () => {
-    logout();
-    setShowUserMenu(false);
+  // Listen for authentication events from AuthContext
+  useEffect(() => {
+    const handleAuthChange = (event) => {
+      if (event.type === 'auth:logout') {
+        setShowUserMenu(false);
+        setIsMobileMenuOpen(false);
+        setShowAuthModal(false);
+      }
+    };
+
+    window.addEventListener('auth:logout', handleAuthChange);
+    return () => window.removeEventListener('auth:logout', handleAuthChange);
+  }, []);
+
+  // Auto-hide messages after a delay
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        clearSuccessMessage();
+      }, 5000); // Hide success message after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage, clearSuccessMessage]);
+
+  useEffect(() => {
+    if (error && !showAuthModal) {
+      const timer = setTimeout(() => {
+        clearError();
+      }, 8000); // Hide error message after 8 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [error, showAuthModal, clearError]);
+
+  // Enhanced keyboard shortcuts for auth modal
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Ctrl+L or Cmd+L to open login modal
+      if ((event.ctrlKey || event.metaKey) && event.key === 'l' && !isAuthenticated) {
+        event.preventDefault();
+        openAuthModal('login');
+      }
+      
+      // Ctrl+R or Cmd+R to open register modal (only if not authenticated)
+      if ((event.ctrlKey || event.metaKey) && event.key === 'r' && !isAuthenticated) {
+        event.preventDefault();
+        openAuthModal('register');
+      }
+      
+      // Escape key to close modal
+      if (event.key === 'Escape') {
+        if (showAuthModal) {
+          closeAuthModal();
+        } else if (showUserMenu) {
+          setShowUserMenu(false);
+        } else if (isMobileMenuOpen) {
+          setIsMobileMenuOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isAuthenticated, showAuthModal, showUserMenu, isMobileMenuOpen]);
+
+  // Utility function to get user display name
+  const getUserDisplayName = () => {
+    if (user?.firstName && user?.lastName) {
+      return `${user.firstName} ${user.lastName}`;
+    }
+    if (user?.firstName) {
+      return user.firstName;
+    }
+    if (user?.email) {
+      return user.email.split('@')[0]; // Use email username part
+    }
+    return 'User';
+  };
+
+  // Utility function to get user initials
+  const getUserInitials = () => {
+    if (user?.firstName && user?.lastName) {
+      return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+    }
+    if (user?.firstName) {
+      return user.firstName.charAt(0);
+    }
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
+  };
+
+  // Handle logout with confirmation
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setShowUserMenu(false);
+      setIsMobileMenuOpen(false);
+      // Success message will be handled by AuthContext
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Error handling is managed by AuthContext
+    }
   };
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
 
-  const openAuthModal = (mode) => {
+  // Enhanced auth modal handlers
+  const openAuthModal = (mode = 'login') => {
     setAuthModalMode(mode);
     setShowAuthModal(true);
+    setAuthModalKey(prev => prev + 1); // Force fresh modal instance
+    // Clear any existing errors when opening modal
+    clearError();
+    clearSuccessMessage();
+    // Close other menus
+    setShowUserMenu(false);
+    setIsMobileMenuOpen(false);
+  };
+
+  const closeAuthModal = () => {
+    setShowAuthModal(false);
+    // Clear form-related errors when closing
+    clearError();
+    clearSuccessMessage();
+  };
+
+  // Handle successful authentication with enhanced feedback
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    setShowUserMenu(false);
+    setIsMobileMenuOpen(false);
+    
+    // Show welcome message for new users
+    if (authModalMode === 'register' && user?.firstName) {
+      // This will trigger the success message from AuthContext
+      console.log(`Welcome ${user.firstName}! Your account has been created.`);
+    }
+    
+    // Reset modal key for next time
+    setAuthModalKey(prev => prev + 1);
+  };
+
+  // Handle authentication errors
+  const handleAuthError = (error) => {
+    console.error('Authentication error:', error);
+    // Keep modal open for user to retry
+    // Error display is handled by AuthModal and AuthContext
   };
 
   return (
@@ -359,6 +498,7 @@ const Navbar = () => {
       </nav>
       
       <AuthModal 
+        key={authModalKey} // Force fresh instance when key changes
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         initialMode={authModalMode}
