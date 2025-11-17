@@ -1,59 +1,127 @@
 'use client';
-import React from "react";
-import Link from "next/link";
 
-export default function EventCard({ event }) {
-  if (!event) return null;
+import { motion } from 'framer-motion';
+import { Calendar, MapPin } from 'lucide-react';
+import Image from 'next/image';
 
-  // Safely extract event data from Ticketmaster
-  const image =
-    event.images?.find((img) => img.ratio === "16_9")?.url ||
-    event.images?.[0]?.url ||
-    "https://via.placeholder.com/300x200.png?text=Event+Image";
+export default function EventCard({ event, onSelect }) {
+  const {
+    title,
+    date,
+    time,
+    location,
+    image,
+    description,
+    latitude,
+    longitude,
+  } = event || {};
 
-  const eventName = event.name || "Unnamed Event";
-
-  const dateObj = event.dates?.start?.localDate
-    ? new Date(event.dates.start.localDate)
-    : null;
-
-  const date = dateObj ? dateObj.toDateString() : "TBD";
-  const time = event.dates?.start?.localTime
-    ? ` @ ${event.dates.start.localTime}`
-    : "";
-
-  const venue = event._embedded?.venues?.[0]?.name || "Location TBD";
+  const handleClick = () => {
+    if (onSelect) onSelect(event);
+  };
 
   return (
-    <div className="event-card">
-      {/* === Event Image === */}
-      <div className="event-image">
-        <img src={image} alt={eventName} />
+    <motion.div
+      onClick={handleClick}
+      className="event-card"
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.98 }}
+      style={{
+        cursor: 'pointer',
+        borderRadius: '14px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        backgroundColor: '#fff',
+        overflow: 'hidden',
+        transition: 'all 0.3s ease',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* ==== Event Image ==== */}
+      <div className="event-image" style={{ position: 'relative' }}>
+        <Image
+          src={image || '/default-event.jpg'}
+          alt={title || 'Event Image'}
+          width={400}
+          height={200}
+          style={{
+            width: '100%',
+            height: '200px',
+            objectFit: 'cover',
+          }}
+        />
       </div>
 
-      {/* === Event Info === */}
-      <div className="event-info">
-        <div className="event-meta">
-          <span>{date + time}</span>
+      {/* ==== Event Info ==== */}
+      <div
+        className="event-info"
+        style={{ padding: '16px', display: 'flex', flexDirection: 'column' }}
+      >
+        <h3
+          style={{
+            fontSize: '1.1rem',
+            fontWeight: '600',
+            color: '#222',
+            marginBottom: '8px',
+          }}
+        >
+          {title || 'Untitled Event'}
+        </h3>
+
+        <div
+          className="event-meta"
+          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <Calendar size={16} color="#6b6b6b" />
+          <span style={{ fontSize: '0.9rem', color: '#666' }}>
+            {date ? new Date(date).toLocaleDateString() : 'Date TBD'}
+          </span>
         </div>
 
-        <h3>{eventName}</h3>
-        <p style={{ fontSize: "0.8rem", color: "#777" }}>{venue}</p>
-
-        <div className="attendees">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="attendee-circle"></div>
-          ))}
-          <span className="attendee-count">39 attendees</span>
+        <div
+          className="event-location"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginTop: '6px',
+          }}
+        >
+          <MapPin size={16} color="#6b6b6b" />
+          <span style={{ fontSize: '0.9rem', color: '#666' }}>
+            {location || 'Location TBD'}
+          </span>
         </div>
+
+        {description && (
+          <p
+            style={{
+              fontSize: '0.85rem',
+              color: '#777',
+              marginTop: '10px',
+              lineHeight: '1.4',
+            }}
+          >
+            {description.length > 80
+              ? description.substring(0, 80) + '...'
+              : description}
+          </p>
+        )}
+
+        {/* ==== Map Indicator (optional) ==== */}
+        {latitude && longitude && (
+          <p
+            style={{
+              marginTop: '12px',
+              fontSize: '0.8rem',
+              color: '#4b6bff',
+              fontWeight: '500',
+            }}
+          >
+            📍 View on map
+          </p>
+        )}
       </div>
-
-      {/* === Clickable Link === */}
-      <Link
-        href={`/event/${event.id}`}
-        className="event-link"
-        aria-label={`View details for ${eventName}`}
-      />
-    </div>
+    </motion.div>
   );
 }
