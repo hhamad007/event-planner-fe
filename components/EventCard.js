@@ -90,7 +90,7 @@ export default function EventCard({ event, onSelect }) {
           >
             <MapPin size={16} color="#6b6b6b" />
             <span style={{ fontSize: "0.9rem", color: "#666" }}>
-              {location || "Location TBD"}
+              {location.address || "Location TBD"}
             </span>
           </div>
 
