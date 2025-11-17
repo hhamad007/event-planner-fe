@@ -8,10 +8,11 @@ import EventCard from '@/components/EventCard';
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(false)
 
   // Fetch all events on load
   useEffect(() => {
-    async function fetchEvents() {
+    async function loadEvents() {
       setLoading(true);
       const res = await getAllEvents();
       setEvents(res || []);

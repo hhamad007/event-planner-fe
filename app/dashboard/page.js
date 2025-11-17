@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import EventGrid from '@/components/EventGrid';
 import MapComponent from '@/components/MapComponent';
-import { getMyEvents, searchEvents } from '@/utils/api';
+import { getMyEvents, searchEvents, getAllEvents } from '@/utils/api';
 
 export default function DashboardPage() {
   const router = useRouter();
