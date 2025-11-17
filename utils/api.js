@@ -1,64 +1,64 @@
-/* Write functions to communicate with the backend API. Include functions for login, register, getting events, creating events, and joining events. Handle errors and authentication tokens properly. */
+// /* Write functions to communicate with the backend API. Include functions for login, register, getting events, creating events, and joining events. Handle errors and authentication tokens properly. */
 
-import axios from "axios";
+// import axios from "axios";
 
-// API Configuration
-//const API_BASE_URL = process.env.API_URL || "http://localhost:3000";
-const API_BASE_URL =
-  process.env.API_URL || "https://event-planner-backend-d1lv.onrender.com/api";
+// // API Configuration
+// //const API_BASE_URL = process.env.API_URL || "http://localhost:3000";
+// const API_BASE_URL =
+//   process.env.API_URL || "https://event-planner-backend-d1lv.onrender.com/api";
 
-async function apiCall(endpoint, method, data) {
-  const url = `${API_BASE_URL}${endpoint}`;
-  const response = await axios({
-    method,
-    url,
-    // headers: {
-    //   authorization: this.tokenProvider()
-    // },
-    data,
-  });
-  console.log(response.data.data)
-  return response.data.data;
-}
+// async function apiCall(endpoint, method, data) {
+//   const url = `${API_BASE_URL}${endpoint}`;
+//   const response = await axios({
+//     method,
+//     url,
+//     // headers: {
+//     //   authorization: this.tokenProvider()
+//     // },
+//     data,
+//   });
+//   console.log(response.data.data)
+//   return response.data.data;
+// }
 
-// ======== 🧠 EVENT ROUTES ========
+// // ======== 🧠 EVENT ROUTES ========
 
-/* 📦 Get all events */
-export async function getAllEvents() {
-  return await apiCall("/events", "GET");
-}
+// /* 📦 Get all events */
+// export async function getAllEvents() {
+//   return await apiCall("/events", "GET");
+// }
 
-/* 👤 Get user's events (requires auth) */
-export async function getMyEvents() {
-  return await fetchAPI("/events/my/events", "GET", null, true);
-}
+// /* 👤 Get user's events (requires auth) */
+// export async function getMyEvents() {
+//   return await fetchAPI("/events/my/events", "GET", null, true);
+// }
 
-/* 🔍 Search events with query parameters */
-export async function searchEvents(queryParams = {}) {
-  const queryString = new URLSearchParams(queryParams).toString();
-  const endpoint = `/events/search${queryString ? `?${queryString}` : ""}`;
-  return await fetchAPI(endpoint, "GET");
-}
+// /* 🔍 Search events with query parameters */
+// export async function searchEvents(queryParams = {}) {
+//   const queryString = new URLSearchParams(queryParams).toString();
+//   const endpoint = `/events/search${queryString ? `?${queryString}` : ""}`;
+//   return await fetchAPI(endpoint, "GET");
+// }
 
-/* ➕ Create event */
-export async function createEvent(eventData) {
-  return await fetchAPI("/events", "POST", eventData, true);
-}
+// /* ➕ Create event */
+// export async function createEvent(eventData) {
+//   return await fetchAPI("/events", "POST", eventData, true);
+// }
 
-/* ✏️ Update event */
-export async function updateEvent(id, eventData) {
-  return await fetchAPI(`/events/${id}`, "PUT", eventData, true);
-}
+// /* ✏️ Update event */
+// export async function updateEvent(id, eventData) {
+//   return await fetchAPI(`/events/${id}`, "PUT", eventData, true);
+// }
 
-/* ❌ Delete event */
-export async function deleteEvent(id) {
-  return await fetchAPI(`/events/${id}`, "DELETE", null, true);
-}
+// /* ❌ Delete event */
+// export async function deleteEvent(id) {
+//   return await fetchAPI(`/events/${id}`, "DELETE", null, true);
+// }
 
-/* 📄 Get event by ID */
-export async function getEventById(id) {
-  return await fetchAPI(`/events/${id}`, "GET");
-}
+// /* 📄 Get event by ID */
+// export async function getEventById(id) {
+//   return await fetchAPI(`/events/${id}`, "GET");
+// }
 
 // // Token management utilities
 // const TokenManager = {
@@ -559,3 +559,95 @@ export async function getEventById(id) {
 // export const getNearbyEvents = eventsAPI.getNearbyEvents;
 
 // export default api;
+
+import axios from "axios";
+
+const API_BASE_URL =
+  process.env.API_URL || "https://event-planner-backend-d1lv.onrender.com/api";
+
+// axios instance
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+});
+
+// attach token whenever possible
+api.interceptors.request.use((config) => {
+  if (typeof window != "undefined") {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
+// auth api
+export const authAPI = {
+  register: (data) => api.post("/auth/register", data).then((res) => res.data),
+  login: async (data) => {
+    const res = await api.post("/auth/login", data);
+    if (res.data.token) {
+      localStorage.setItem("token", res.data.token);
+    }
+    return res.data;
+  },
+  logout: () => {
+    localStorage.removeItem("token");
+  },
+  getProfile: () => api.get("/auth/profile").then((res) => res.data),
+};
+
+// event api
+export const eventsAPI = {
+  getAll: () => api.get("/events").then((res) => res.data),
+  getById: (id) => api.get(`/events/${id}`).then((res) => res.data),
+  getStats: (id) => api.get(`/events/${id}/stats`).then((res) => res.data),
+  getByOrganiser: (organiserId) =>
+    api.get(`/events/organiser/${organiserId}`).then((res) => res.data),
+  getMyEvents: () => api.get("/events/my-events").then((res) => res.data),
+  create: (data) => api.post("/events", data).then((res) => res.data),
+  update: (id, data) => api.put(`/events/${id}`, data).then((res) => res.data),
+  delete: (id) => api.delete(`/events/${id}`).then((res) => res.data),
+};
+
+// user api
+export const usersAPI = {
+  getById: (id) => api.get(`/users/${id}`).then((res) => res.data),
+  update: (id, data) => api.put(`/users/${id}`, data).then((res) => res.data),
+  delete: (id) => api.delete(`/users/${id}`).then((res) => res.data),
+};
+
+// RSVP api
+export const rsvpAPI = {
+  rsvpEvent: (eventId, data) =>
+    api.post(`/rsvp/${eventId}`, data).then((res) => res.data),
+  getStatus: (eventId) =>
+    api.get(`/rsvp/${eventId}/status`).then((res) => res.data),
+  getAttendees: (eventId) =>
+    api.get(`/rsvp/${eventId}/attendees`).then((res) => res.data),
+  getUserRsvps: () => api.get("/rsvp/user").then((res) => res.data),
+};
+
+// upload api for images
+export const uploadAPI = {
+  uploadEventImage: (eventId, file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    return api
+      .post(`/upload/event/${eventId}`, formData)
+      .then((res) => res.data);
+  },
+  uploadAvatar: (file) => {
+    const formData = new FormData();
+    formData.append("avatar", file);
+    return api.post("/upload/avatar", formData).then((res) => res.data);
+  },
+};
+
+// health api
+export const healthAPI = {
+  check: () => api.get("/health").then((res) => res.data),
+};
+
+export default api;

@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { eventsAPI } from '@/utils/api';
+// import { eventsAPI } from '@/utils/api';
 import EventGrid from '@/components/EventGrid';
-import { getAllEvents } from '@/utils/api';
+// import { getAllEvents } from '@/utils/api';
+import { eventsAPI } from '@/utils/api';
 import EventCard from '@/components/EventCard';
 
 export default function HomePage() {
@@ -14,8 +15,9 @@ export default function HomePage() {
   useEffect(() => {
     async function loadEvents() {
       setLoading(true);
-      const res = await getAllEvents();
-      setEvents(res || []);
+      // const res = await getAllEvents();
+      const res = await eventsAPI.getAll();
+      setEvents(res?.data || []);
       setLoading(false);
     }
     loadEvents();
