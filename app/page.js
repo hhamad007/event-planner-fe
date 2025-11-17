@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { eventsAPI } from '@/utils/api';
 import EventGrid from '@/components/EventGrid';
 import { getAllEvents } from '@/utils/api';
 import EventCard from '@/components/EventCard';
@@ -21,7 +22,7 @@ export default function HomePage() {
 
   return (
     <main className="home-container">
-      {/* ✅ Collaborator’s NavBar will automatically appear (from layout.js) */}
+      {/* Collaborator’s NavBar will automatically appear (from layout.js) */}
       <section className="event-grid-section">
         {loading ? (
           <div className="text-center text-gray-500 mt-10">
