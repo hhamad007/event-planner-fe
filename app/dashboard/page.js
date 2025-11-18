@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import EventGrid from '@/components/EventGrid';
-import MapComponent from '@/components/MapComponent';
-import { getMyEvents, searchEvents, getAllEvents } from '@/utils/api';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import EventGrid from "@/components/EventGrid";
+import MapComponent from "@/components/MapComponent";
+import api from "@/utils/api";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [events, setEvents] = useState([]);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  //  Fetch user’s created events
+  // Fetch user's created events
   useEffect(() => {
     async function fetchMyEvents() {
       try {
         setLoading(true);
-        const res = await getMyEvents();
+        const res = await api.getMyEvents();
         if (res && Array.isArray(res.data)) {
           setEvents(res.data);
         } else if (Array.isArray(res)) {
@@ -27,7 +27,7 @@ export default function DashboardPage() {
           setEvents([]);
         }
       } catch (error) {
-        console.error('Error fetching events:', error);
+        console.error("Error fetching events:", error);
         setEvents([]);
       } finally {
         setLoading(false);
@@ -36,11 +36,11 @@ export default function DashboardPage() {
     fetchMyEvents();
   }, []);
 
-  //  Search events
+  // Search events
   async function handleSearch(e) {
     e.preventDefault();
     setLoading(true);
-    const res = await searchEvents({ q: query });
+    const res = await api.searchEvents({ q: query });
     if (res && Array.isArray(res.data)) setEvents(res.data);
     else if (Array.isArray(res)) setEvents(res);
     else setEvents([]);
@@ -49,7 +49,7 @@ export default function DashboardPage() {
 
   // Handle create event
   function handleCreateEvent() {
-    router.push('/create-event'); // Navigates to your Create Event page
+    router.push("/create-event");
   }
 
   return (
@@ -62,8 +62,6 @@ export default function DashboardPage() {
             Manage your events, create new ones, and view their locations.
           </p>
         </div>
-
-        {/* Create Event Button */}
         <button onClick={handleCreateEvent} className="create-event-btn">
           + Create Event
         </button>
@@ -86,19 +84,18 @@ export default function DashboardPage() {
           <div className="loading-text">Loading events...</div>
         ) : events.length > 0 ? (
           <>
-            {/*  Event grid updated to handle card clicks */}
             <EventGrid events={events} onSelect={setSelectedEvent} />
-
-            {/*  If an event is clicked, show its map below */}
-            {selectedEvent && selectedEvent.latitude && selectedEvent.longitude && (
-              <div style={{ marginTop: '30px' }}>
-                <MapComponent
-                  latitude={selectedEvent.latitude}
-                  longitude={selectedEvent.longitude}
-                  eventTitle={selectedEvent.title}
-                />
-              </div>
-            )}
+            {selectedEvent &&
+              selectedEvent.latitude &&
+              selectedEvent.longitude && (
+                <div style={{ marginTop: "30px" }}>
+                  <MapComponent
+                    latitude={selectedEvent.latitude}
+                    longitude={selectedEvent.longitude}
+                    eventTitle={selectedEvent.title}
+                  />
+                </div>
+              )}
           </>
         ) : (
           <div className="no-events-text">No events found.</div>
