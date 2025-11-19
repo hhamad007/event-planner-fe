@@ -587,8 +587,9 @@ export const authAPI = {
   register: (data) => api.post("/auth/register", data).then((res) => res.data),
   login: async (data) => {
     const res = await api.post("/auth/login", data);
-    if (res.data.token) {
-      localStorage.setItem("token", res.data.token);
+    console.log ("api response;", res);
+    if (res.data.data.token) {
+      localStorage.setItem("token", res.data.data.token);
     }
     return res.data;
   },

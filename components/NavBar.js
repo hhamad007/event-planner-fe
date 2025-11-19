@@ -64,28 +64,26 @@ const NavBar = () => {
 
           {/* Auth Buttons */}
           <div className="flex items-center gap-4 ml-auto">
-            <Link href="/login">
+        
               <Button
-              // onClick={() => {
-              //   setAuthMode("login");
-              //   setShowAuthModal(true);
-              //   console.log("Login clicked");
-              // }}
+              onClick={() => {
+                openAuthModal("login");
+                console.log("Login clicked");
+              }}
               >
                 Login
               </Button>
-            </Link>
-            <Link href="/signup">
+           
+           
               <Button
-              // onClick={() => {
-              //   setAuthMode("register");
-              //   setShowAuthModal(true);
-              //   console.log("Sign Up clicked");
-              // }}
+              onClick={() => {
+                openAuthModal("register");
+                console.log("Sign Up clicked");
+              }}
               >
                 Sign Up
               </Button>
-            </Link>
+           
           </div>
         </Card>
       </nav>

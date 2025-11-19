@@ -13,8 +13,11 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <NavBar />
+          <div id="modal-root" />
           {children}
+          
         </AuthProvider>
+        
       </body>
     </html>
   );
