@@ -25,11 +25,13 @@ const NavBar = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState("login");
 
+  // Open modal with desired mode
   const openAuthModal = (mode) => {
     setAuthMode(mode);
     setShowAuthModal(true);
   };
 
+  // Close modal
   const closeAuthModal = () => setShowAuthModal(false);
 
   return (
@@ -44,28 +46,51 @@ const NavBar = () => {
             <FancyLogo />
           </Link>
 
-          {/* Auth Buttons */}
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black font-semibold"
-              onClick={() => openAuthModal("login")}
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link
+              href="/dashboard"
+              className="text-white hover:text-pink-500 font-medium transition"
             >
-              Login
-            </Button>
+              Dashboard
+            </Link>
+            <Link
+              href="/about"
+              className="text-white hover:text-purple-400 font-medium transition"
+            >
+              About
+            </Link>
+          </div>
 
-            <Button
-              variant="default"
-              className="bg-pink-500 text-white hover:bg-yellow-400 hover:text-black font-semibold"
-              onClick={() => openAuthModal("register")}
-            >
-              Sign Up
-            </Button>
+          {/* Auth Buttons */}
+          <div className="flex items-center gap-4 ml-auto">
+            <Link href="/login">
+              <Button
+              // onClick={() => {
+              //   setAuthMode("login");
+              //   setShowAuthModal(true);
+              //   console.log("Login clicked");
+              // }}
+              >
+                Login
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button
+              // onClick={() => {
+              //   setAuthMode("register");
+              //   setShowAuthModal(true);
+              //   console.log("Sign Up clicked");
+              // }}
+              >
+                Sign Up
+              </Button>
+            </Link>
           </div>
         </Card>
       </nav>
 
-      {/* Auth Modal (NO Dialog wrapper!) */}
+      {/* Auth Modal */}
       <AuthModal
         isOpen={showAuthModal}
         onClose={closeAuthModal}
