@@ -16,6 +16,9 @@ export default function AuthModal({ isOpen, onClose, mode = "login" }) {
     firstName: "",
     lastName: "",
     confirmPassword: "",
+    phone: "",
+    bio: "",
+    location: "",
   });
   const [portalContainer, setPortalContainer] = useState(null);
 
@@ -49,19 +52,43 @@ export default function AuthModal({ isOpen, onClose, mode = "login" }) {
   };
 
   const login = async (email, password) => {
-    const res = authAPI.login({email: email, password: password});
+    const res = authAPI.login({ email: email, password: password });
   };
 
-  const register = async (firstName, lastName, email, password) => {
-    const res =  authAPI.register(firstName, lastName, email, password);
+  const register = async (
+    firstName,
+    lastName,
+    email,
+    password,
+    phone,
+    bio,
+    location
+  ) => {
+    console.log(firstName, lastName)
+    const res = authAPI.register({
+      name: firstName + " " + lastName,
+      email: email,
+      password: password,
+      phone: phone,
+      bio: bio,
+      location: location,
+    });
     console.log("Registration response:", res);
-  };  
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     authMode === "login"
-        ? login(form.email,form.password)
-        : register(form.firstName,form.lastName,form.email,form.password);
+      ? login(form.email, form.password)
+      : register(
+          form.firstName,
+          form.lastName,
+          form.email,
+          form.password,
+          form.phone,
+          form.bio,
+          form.location
+        );
 
     onClose();
   };
@@ -93,7 +120,10 @@ export default function AuthModal({ isOpen, onClose, mode = "login" }) {
                   <h2 id="auth-modal-title" className="text-xl font-semibold">
                     {isLogin ? "Login" : "Sign Up"}
                   </h2>
-                  <p id="auth-modal-desc" className="text-sm text-muted-foreground">
+                  <p
+                    id="auth-modal-desc"
+                    className="text-sm text-muted-foreground"
+                  >
                     {isLogin
                       ? "Enter your email and password to log in."
                       : "Fill in your details to create a new account."}
