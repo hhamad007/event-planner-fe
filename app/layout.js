@@ -1,13 +1,18 @@
+"use client";
+
 import "./globals.css";
-export const metadata = {
-  title: "Event Planner",
-  description: "Discover and manage events effortlessly.",
-};
+import { AuthProvider } from "@/context/AuthContext";
+import NavBar from "@/components/NavBar";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          <NavBar />
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }
