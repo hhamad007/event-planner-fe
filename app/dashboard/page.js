@@ -66,6 +66,7 @@ export default function DashboardPage() {
         JSON.stringify(form.tags.split(",").map((tag) => tag.trim()))
       );
       formData.append("location", JSON.stringify(form.location));
+      formData.append("tags", JSON.stringify(form.tags));
       if (form.image) {
         formData.append("image", form.image);
       }

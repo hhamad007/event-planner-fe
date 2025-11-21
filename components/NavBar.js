@@ -1,13 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
 
 const NavBar = () => {
   const { user, logout } = useAuth();
-  console.log("NavBar user:", user);
+  const pathname = usePathname();
+
+  const isHome = pathname === "/";
+  const isDashboard = pathname === "/dashboard";
 
   useEffect(() => {
     console.log("NavBar user changed:", user);
@@ -21,12 +25,28 @@ const NavBar = () => {
           <span className="navbar-logo-text">EventSocial</span>
           <Link href="/" passHref>
             <button
-              className="navbar-pill-btn navbar-login-btn"
+              className={`navbar-pill-btn navbar-login-btn${
+                isHome ? " active" : ""
+              }`}
+              aria-label="Go to Home"
               style={{ marginLeft: "18px" }}
             >
               Home
             </button>
           </Link>
+          {user && (
+            <Link href="/dashboard" passHref>
+              <button
+                className={`navbar-pill-btn navbar-login-btn${
+                  isDashboard ? " active" : ""
+                }`}
+                aria-label="Go to Dashboard"
+                style={{ marginLeft: "8px" }}
+              >
+                Dashboard
+              </button>
+            </Link>
+          )}
         </span>
         <div className="navbar-actions-fancy">
           {user ? (

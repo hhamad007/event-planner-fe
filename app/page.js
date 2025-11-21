@@ -11,8 +11,14 @@ export default function HomePage() {
   useEffect(() => {
     async function loadEvents() {
       setLoading(true);
-      const res = await eventsAPI.getAll();
-      setEvents(res?.data || []);
+      try {
+        const res = await eventsAPI.getAll();
+        console.log("Events API response:", res);
+        setEvents(res?.data || []);
+      } catch (err) {
+        console.error("Failed to load events:", err);
+        setEvents([]);
+      }
       setLoading(false);
     }
     loadEvents();
@@ -26,7 +32,8 @@ export default function HomePage() {
           Welcome to <span className="text-gray-300">EventPlanner</span>
         </h1>
         <p className="text-lg text-gray-400 mb-10 text-center max-w-2xl">
-          Discover, create, and manage events with ease. Your professional event planning platform.
+          Discover, create, and manage events with ease. Your professional event
+          planning platform.
         </p>
       </section>
 
@@ -53,7 +60,8 @@ export default function HomePage() {
       {/* FOOTER */}
       <footer className="text-gray-500 text-center py-8 border-t border-gray-800">
         <p className="text-sm">
-          &copy; {new Date().getFullYear()} EventPlanner &mdash; All Rights Reserved
+          &copy; {new Date().getFullYear()} EventPlanner &mdash; All Rights
+          Reserved
         </p>
       </footer>
     </main>

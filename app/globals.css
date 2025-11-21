@@ -301,6 +301,12 @@ button:hover,
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
 }
 
+.navbar-pill-btn.active {
+  border: 2px solid #ff9800;
+  background: linear-gradient(90deg, #ff9800, #18181c);
+  color: #fff;
+}
+
 .navbar-login-btn {
   background: linear-gradient(90deg, var(--color-rose), var(--color-purple));
   font-size: 1.15rem; /* Make text a bit bigger */
