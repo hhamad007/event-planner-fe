@@ -1,3 +1,4 @@
+import { data } from "autoprefixer";
 import axios from "axios";
 
 const API_BASE_URL =
@@ -12,7 +13,7 @@ const api = axios.create({
 // attach token whenever possible
 api.interceptors.request.use((config) => {
   if (typeof window != "undefined") {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,30 +28,48 @@ export const authAPI = {
     const res = await api.post("/auth/login", data);
     console.log("api response;", res);
     if (res.data.data.token) {
-      localStorage.setItem("token", res.data.data.token);
+      localStorage.setItem("authToken", res.data.data.token);
+    }
+    if (res.data.data.user) {
+      localStorage.setItem("userData", JSON.stringify(res.data.data.user));
     }
     return res.data;
   },
   logout: () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("authToken");
   },
   getProfile: () => api.get("/auth/profile").then((res) => res.data),
 };
 
 // event api
 export const eventsAPI = {
+  // Get all events (public)
   getAll: () => api.get("/events").then((res) => res.data),
-  getById: (id) => api.get(`/events/${id}`).then((res) => res.data),
-  getStats: (id) => api.get(`/events/${id}/stats`).then((res) => res.data),
-  getByOrganiser: (organiserId) =>
-    api.get(`/events/organiser/${organiserId}`).then((res) => res.data),
-  getMyEvents: () => api.get("/events/my-events"),
-  searchEvents: (params) =>
-    api.get("/events/search", { params }).then((res) => res.data),
-  create: (data) => api.post("/events", data).then((res) => res.data),
-  createEvent: (eventData) => api.post("/events", eventData),
+
+  // Get organiser's events (private)
+  getMyEvents: () => api.get("/events/my/events").then((res) => res.data),
+
+  // Create new event
+  create: (data) =>
+    api
+      .post("/events", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => res.data),
+
+  // Update event
   update: (id, data) => api.put(`/events/${id}`, data).then((res) => res.data),
+
+  // Delete event
   delete: (id) => api.delete(`/events/${id}`).then((res) => res.data),
+
+  // Get single event
+  getById: (id) => api.get(`/events/${id}`).then((res) => res.data),
+
+  // Search events
+  search: (params) =>
+    api.get("/events/search", { params }).then((res) => res.data),
 };
 
 // user api

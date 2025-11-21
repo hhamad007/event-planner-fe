@@ -34,7 +34,12 @@ export default function EventCard({ event, onSelect }) {
           alt={title || "Event Image"}
           width={400}
           height={200}
-          className="w-full h-[200px] object-cover"
+          style={{
+            objectFit: "cover",
+            width: "100%",
+            height: "200px",
+            borderRadius: "8px",
+          }}
         />
       </div>
 

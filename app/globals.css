@@ -11,9 +11,12 @@
   --color-dark: #18181c;
   --color-gray: #e5e7eb;
   --color-white: #fff;
-  --color-accent: #fbbf24; /* yellow */
-  --color-accent2: #ec4899; /* pink */
+  --color-accent: #ef4444; /* red */
+  --color-accent2: #fbbf24; /* yellow */
   --color-accent3: #a78bfa; /* purple */
+  --color-accent4: #ec4899; /* pink */
+  --color-cream: #fef9c3; /* cream */
+  --color-rose: #fda4af; /* rose */
   --radius: 14px;
 }
 
@@ -28,16 +31,27 @@ body {
   color: var(--color-white);
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
+  padding-left: 20px; /* Add space on the left side */
+  padding-right: 20px; /* Add this line */
+}
+
+/* Optionally, for mobile screens, reduce both paddings */
+@media (max-width: 768px) {
+  body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 
 /* ======= NavBar ======= */
 nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  border-bottom: 4px solid #ffd600;
-  background: linear-gradient(to right, #000, #6b21a8, #000);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(
+    90deg,
+    var(--color-cream) 70%,
+    var(--color-rose) 100%
+  );
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.08);
+  border-bottom: 2px solid var(--color-rose);
   width: 100%;
 }
 
@@ -75,6 +89,62 @@ nav {
   margin-right: 12px;
 }
 
+/* ======= Fancy Navbar ======= */
+.navbar-fancy {
+  width: 100%;
+  background: linear-gradient(90deg, #18181c 70%, #444 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-bottom: 2px solid #444;
+  padding: 0;
+}
+
+.navbar-card,
+.navbar-fancy-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 32px;
+  border-radius: 18px; /* Rounded equally on both sides */
+  background: rgba(24, 24, 28, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-gray);
+}
+
+.navbar-logo-fancy {
+  display: flex;
+  align-items: center;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  gap: 10px;
+}
+
+.navbar-logo-icon {
+  font-size: rem;
+  margin-right: 6px;
+}
+
+.navbar-logo-text {
+  color: #fff;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+.navbar-actions-fancy {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.navbar-user-fancy {
+  color: #fff;
+  font-weight: 600;
+  margin-right: 10px;
+  font-size: 1rem;
+}
+
 /* ======= Event Grid ======= */
 .event-grid-container {
   display: flex;
@@ -94,27 +164,34 @@ nav {
 
 /* ======= Event Card ======= */
 .event-card {
-  background: var(--color-dark);
+  background: linear-gradient(120deg, #18181c 60%, #ef4444 100%);
+  border: 2px solid #ef4444;
+  color: #fff;
   border-radius: var(--radius);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  transition: all 0.25s ease;
-  width: 100%;
-  max-width: 320px;
+  transition: all 0.2s;
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+  flex: 0 0 auto;
   cursor: pointer;
   position: relative;
-  border: 1px solid var(--color-gray);
+  margin-bottom: 0;
+  margin-top: 0;
+  margin-left: 24px; /* Move right */
+  margin-top: 16px; /* Move down */
 }
 
 .event-card:hover {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-  border-color: var(--color-accent3);
+  border-color: #fbbf24;
+  transform: translateY(-4px) scale(1);
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.18);
 }
 
 .event-image {
   width: 100%;
-  height: 180px;
+  height: 90px;
   overflow: hidden;
   position: relative;
   background: var(--color-black);
@@ -124,7 +201,7 @@ nav {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  border-radius: 8px 8px 0 0;
 }
 
 .event-card:hover .event-image img {
@@ -132,48 +209,128 @@ nav {
 }
 
 .event-info {
-  padding: 16px 20px;
+  padding: 10px 12px;
   text-align: left;
 }
 
 .event-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
-  margin-bottom: 8px;
-  color: var(--color-white);
+  margin-bottom: 6px;
+  color: #ef4444;
 }
 
-.event-meta {
-  font-size: 0.9rem;
+.event-meta,
+.event-location {
+  font-size: 0.8rem;
   color: var(--color-gray);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .event-description {
-  margin-top: 10px;
+  margin-top: 6px;
   color: var(--color-gray);
-  font-size: 1rem;
+  font-size: 0.9rem;
+}
+
+.event-card-empty {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  min-width: 180px;
+  max-width: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray);
+  font-size: 0.95rem;
+}
+
+.event-category-badge {
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  display: inline-block;
 }
 
 /* ======= Buttons ======= */
 button,
 .create-event-btn {
-  background: var(--color-accent);
-  color: var(--color-black);
+  background: linear-gradient(90deg, #ef4444, #a78bfa);
+  color: #fff;
   border: none;
   border-radius: var(--radius);
-  padding: 10px 22px;
-  font-weight: 600;
-  font-size: 1rem;
+  padding: 12px 28px;
+  font-weight: 700;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.08);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.18);
 }
 
 button:hover,
 .create-event-btn:hover {
-  background: var(--color-accent2);
-  color: var(--color-white);
+  background: linear-gradient(90deg, #a78bfa, #ef4444);
+  color: #fff;
+}
+
+/* ======= Pill Buttons ======= */
+.navbar-pill-btn {
+  background: linear-gradient(90deg, #444, #18181c);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 28px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.navbar-pill-btn:hover,
+.navbar-pill-btn:focus {
+  background: linear-gradient(90deg, #18181c, #444);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.navbar-login-btn {
+  background: linear-gradient(90deg, var(--color-rose), var(--color-purple));
+  font-size: 1.15rem; /* Make text a bit bigger */
+  border: 2px solid #fff; /* Add white border */
+  padding: 12px 32px; /* Slightly larger button */
+}
+
+.navbar-login-btn:hover {
+  background: linear-gradient(90deg, var(--color-purple), var(--color-rose));
+  border: 2px solid #fff; /* Keep border on hover */
+}
+
+.navbar-signup-btn {
+  background: linear-gradient(90deg, var(--color-purple), var(--color-red));
+  font-size: 1.15rem; /* Make text a bit bigger */
+  border: 2px solid #fff; /* Add white border */
+  padding: 12px 32px; /* Slightly larger button */
+}
+
+.navbar-signup-btn:hover {
+  background: linear-gradient(90deg, var(--color-red), var(--color-purple));
+  border: 2px solid #fff; /* Keep border on hover */
+}
+
+.navbar-logout-btn {
+  background: linear-gradient(90deg, var(--color-red), var(--color-rose));
+}
+
+.navbar-logout-btn:hover {
+  background: linear-gradient(90deg, var(--color-rose), var(--color-red));
 }
 
 /* ======= Utility Classes ======= */
@@ -214,4 +371,13 @@ footer {
   padding: 24px 0 12px 0;
   font-size: 0.95rem;
   border-top: 1px solid var(--color-gray);
+}
+
+.event-row-scroll {
+  /* Already set in style prop, but you can add here for global effect */
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
 }

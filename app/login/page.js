@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authAPI } from "@/utils/api";
 import Link from "next/link";
-import { color } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,10 +22,16 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     try {
-      await authAPI.login(form);
-      router.push("/dashboard");
-    } catch (err) {
-      setError(err?.response?.data?.message || "Login failed.");
+      const result = await login(form.email, form.password);
+      if (result.success) {
+        setTimeout(() => router.push("/dashboard"), 100);
+      } else {
+        setError(result.message || "Login failed.");
+        console.log("Login failed message:", result.message); // Log error from context
+      }
+    } catch (error) {
+      console.log("Login error (catch):", error); // Log raw error object
+      setError(error?.response?.data?.message || "Login failed");
     }
   };
 
