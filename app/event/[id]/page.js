@@ -15,7 +15,7 @@ export default function EventDetailsPage() {
     async function fetchEvent() {
       if (!id) return;
       setLoading(true);
-      const data = await getEventById(id);
+      const data = await eventsAPI.getEventById(id);
       setEvent(data);
       setLoading(false);
     }

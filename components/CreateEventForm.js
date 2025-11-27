@@ -20,7 +20,7 @@ export default function CreateEventForm() {
     setLoading(true);
 
     try {
-      const res = await eventsAPI.create(form);
+      const res = await eventsAPI.create(FormData);
       if (res) alert(" Event created successfully!");
     } catch (err) {
       alert(" Failed to create event.");
