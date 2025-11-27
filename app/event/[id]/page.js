@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { getEventById } from '@/utils/api';
+// import { getEventById } from '@/utils/api';
+import { eventsAPI } from "@/utils/api";
 import MapComponent from '@/components/MapComponent';
 
 export default function EventDetailsPage() {

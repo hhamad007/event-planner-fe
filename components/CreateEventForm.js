@@ -1,15 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { createEvent } from '@/utils/api';
-import LocationPicker from './LocationPicker';
+import { useState } from "react";
+// import { createEvent } from '@/utils/api';
+import { eventsAPI } from "@/utils/api";
+import LocationPicker from "./LocationPicker";
 
 export default function CreateEventForm() {
   const [form, setForm] = useState({
-    title: '',
-    date: '',
-    venue: '',
-    description: '',
+    title: "",
+    date: "",
+    venue: "",
+    description: "",
     location: null,
   });
   const [loading, setLoading] = useState(false);
@@ -19,10 +20,10 @@ export default function CreateEventForm() {
     setLoading(true);
 
     try {
-      const res = await createEvent(form);
-      if (res) alert(' Event created successfully!');
+      const res = await eventsAPI.create(form);
+      if (res) alert(" Event created successfully!");
     } catch (err) {
-      alert(' Failed to create event.');
+      alert(" Failed to create event.");
     } finally {
       setLoading(false);
     }
@@ -58,7 +59,9 @@ export default function CreateEventForm() {
       />
 
       {/* 🌍 Location Picker */}
-      <label style={{ fontWeight: '600', marginTop: '10px' }}>Select Event Location:</label>
+      <label style={{ fontWeight: "600", marginTop: "10px" }}>
+        Select Event Location:
+      </label>
       <LocationPicker
         onLocationSelect={(coords) =>
           setForm({ ...form, location: { lat: coords.lat, lng: coords.lng } })
@@ -66,7 +69,7 @@ export default function CreateEventForm() {
       />
 
       <button type="submit" disabled={loading} className="submit-btn">
-        {loading ? 'Creating...' : 'Create Event'}
+        {loading ? "Creating..." : "Create Event"}
       </button>
     </form>
   );
