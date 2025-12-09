@@ -22,7 +22,7 @@ This is the frontend for the Event Planner web application, built with Next.js a
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/event-planner-frontend.git
+git clone https://github.com/hhamad007/event-planner-frontend.git
 cd event-planner-frontend
 ```
 
