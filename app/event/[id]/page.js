@@ -1,10 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 // import { getEventById } from '@/utils/api';
 import { eventsAPI } from "@/utils/api";
-import MapComponent from '@/components/MapComponent';
 
 export default function EventDetailsPage() {
   const { id } = useParams();
@@ -22,7 +21,8 @@ export default function EventDetailsPage() {
     fetchEvent();
   }, [id]);
 
-  if (loading) return <div className="loading-text">Loading event details...</div>;
+  if (loading)
+    return <div className="loading-text">Loading event details...</div>;
 
   if (!event)
     return (
@@ -36,10 +36,10 @@ export default function EventDetailsPage() {
       {/* Header Section */}
       <header className="event-header">
         <h1 className="event-title">{event.title}</h1>
-        <p className="event-date">
-          {new Date(event.date).toLocaleString()}
+        <p className="event-date">{new Date(event.date).toLocaleString()}</p>
+        <p className="event-location">
+          {event.venue || "Location not specified"}
         </p>
-        <p className="event-location">{event.venue || 'Location not specified'}</p>
       </header>
 
       {/* Image */}
@@ -52,16 +52,8 @@ export default function EventDetailsPage() {
       {/* Description */}
       <section className="event-description">
         <h3>About this event</h3>
-        <p>{event.description || 'No description provided.'}</p>
+        <p>{event.description || "No description provided."}</p>
       </section>
-
-      {/* Map (if location exists) */}
-      {event.location && (
-        <section className="event-map">
-          <h3>📍 Event Location</h3>
-          <MapComponent events={[event]} selectedEvent={event} />
-        </section>
-      )}
     </main>
   );
 }
