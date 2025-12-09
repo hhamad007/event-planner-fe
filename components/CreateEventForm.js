@@ -3,7 +3,7 @@
 import { useState } from "react";
 // import { createEvent } from '@/utils/api';
 import { eventsAPI } from "@/utils/api";
-import LocationPicker from "./LocationPicker";
+
 
 export default function CreateEventForm() {
   const [form, setForm] = useState({
@@ -11,7 +11,7 @@ export default function CreateEventForm() {
     date: "",
     venue: "",
     description: "",
-    location: null,
+
   });
   const [loading, setLoading] = useState(false);
 
