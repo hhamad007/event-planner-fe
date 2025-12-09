@@ -5,14 +5,14 @@ import CreateEventForm from "@/components/CreateEventForm";
 export default function CreateEventPage() {
   return (
     <main
-    // style={{
-    //   maxWidth: '700px',
-    //   margin: '2rem auto',
-    //   background: '#fff',
-    //   borderRadius: '12px',
-    //   boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-    //   padding: '2rem',x
-    // }}
+    style={{
+      maxWidth: '700px',
+      margin: '2rem auto',
+      background: '#fff',
+      borderRadius: '12px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+      padding: '2rem',x
+    }}
     >
       <h1
         style={{
