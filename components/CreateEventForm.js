@@ -58,16 +58,6 @@ export default function CreateEventForm() {
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
 
-      {/* Location Picker */}
-      <label style={{ fontWeight: "600", marginTop: "10px" }}>
-        Select Event Location:
-      </label>
-      <LocationPicker
-        onLocationSelect={(coords) =>
-          setForm({ ...form, location: { lat: coords.lat, lng: coords.lng } })
-        }
-      />
-
       <button type="submit" disabled={loading} className="submit-btn">
         {loading ? "Creating..." : "Create Event"}
       </button>
