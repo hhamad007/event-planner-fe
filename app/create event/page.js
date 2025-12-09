@@ -1,23 +1,30 @@
-'use client';
+"use client";
 
-import CreateEventForm from '@/components/CreateEventForm';
+import CreateEventForm from "@/components/CreateEventForm";
 
 export default function CreateEventPage() {
   return (
     <main
-      style={{
-        maxWidth: '700px',
-        margin: '2rem auto',
-        background: '#fff',
-        borderRadius: '12px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-        padding: '2rem',
-      }}
+    // style={{
+    //   maxWidth: '700px',
+    //   margin: '2rem auto',
+    //   background: '#fff',
+    //   borderRadius: '12px',
+    //   boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+    //   padding: '2rem',
+    // }}
     >
-      <h1 style={{ fontSize: '1.8rem', fontWeight: '700', marginBottom: '1rem', color: '#333' }}>
+      <h1
+        style={{
+          fontSize: "12pt",
+          fontWeight: "700",
+          marginBottom: "10px",
+          color: "#333",
+        }}
+      >
         Create New Event
       </h1>
-      <p style={{ color: '#666', marginBottom: '2rem' }}>
+      <p style={{ color: "#666", marginBottom: "20px" }}>
         Fill out the form below to create a new event.
       </p>
 

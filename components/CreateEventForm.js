@@ -58,7 +58,7 @@ export default function CreateEventForm() {
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
 
-      {/* 🌍 Location Picker */}
+      {/* Location Picker */}
       <label style={{ fontWeight: "600", marginTop: "10px" }}>
         Select Event Location:
       </label>
