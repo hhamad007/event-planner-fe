@@ -11,7 +11,7 @@ export default function CreateEventPage() {
     //   background: '#fff',
     //   borderRadius: '12px',
     //   boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-    //   padding: '2rem',
+    //   padding: '2rem',x
     // }}
     >
       <h1
